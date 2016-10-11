@@ -1,6 +1,6 @@
 {
   "name": "xmsg",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "cluster app msg center",
   "main": "lib/index.js",
   "scripts": {
@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "axon": "^2.0.2",
-    "debug": "^2.2.0",
     "lodash": "^4.15.0"
   },
   "devDependencies": {

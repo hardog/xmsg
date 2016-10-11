@@ -15,7 +15,8 @@ let respond_msg = (args, action) => {
         let datastr = JSON.stringify(data);
         reply({
             msg: `illegal args.(action:${actionstr}, data:${datastr})`, 
-            status: false
+            status: false,
+            stack: __filename
         });
         return;
     }
@@ -31,7 +32,8 @@ let respond_msg = (args, action) => {
     }else{
         reply({
             msg: 'no action found',
-            status: false
+            status: false,
+            stack: __filename
         });
     }
 };

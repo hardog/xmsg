@@ -73,7 +73,6 @@ let send_one = (target, data, cb) => {
             status: false,
             stack: __filename
         });
-        return;
     }
 
     let pair_data = parse.kv_pair(data);

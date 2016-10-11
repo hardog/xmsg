@@ -5,11 +5,13 @@
 [![License](https://img.shields.io/npm/l/xmsg.svg)](https://www.npmjs.com/package/xmsg)
 [![npm Version](https://img.shields.io/npm/v/xmsg.svg)](https://www.npmjs.com/package/xmsg)
 
-cluster app msg center!
+cluster app msg communication center!
+
 
 # Install
 
 `$ npm install xmsg -g`
+
 
 # Test
 
@@ -29,6 +31,7 @@ run lint check:
 ```
 $ npm run lint
 ```
+
 
 # Usage
 
@@ -66,6 +69,7 @@ xmsg.send_bunch([
     '137.233.222.123:3001@fn'
 ], 'hello', [cb]))
 ```
+
 
 # License
 

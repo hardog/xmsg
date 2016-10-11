@@ -91,7 +91,7 @@ describe('#index', () => {
     describe('#send_one', () => {
         it('should reply /hello 3001/', (done) => {
             Promise.resolve()
-            .then(() => xmsg.send_one('127.0.0.1:3001@fn', {a: 1}))
+            .then(() => xmsg.send_one('127.0.0.1:3001', 'fn', {a: 1}))
             .then((r) => {
                 expect(r).to.be.equal('hello 3001');
                 done();
@@ -101,7 +101,7 @@ describe('#index', () => {
 
         it('should reply /parse target error.(addr:, action:fn)/', (done) => {
             Promise.resolve()
-            .then(() => xmsg.send_one('@fn', {a: 1}))
+            .then(() => xmsg.send_one('', 'fn', {a: 1}))
             .catch((e) => {
                 expect(e.status).to.be.false;
                 expect(e.msg).to.be.equal('parse target error.(addr:, action:fn)');
@@ -111,7 +111,7 @@ describe('#index', () => {
 
         it('should reply /hello/ when param not a object', (done) => {
             Promise.resolve()
-            .then(() => xmsg.send_one('127.0.0.1:3001@args', 'hello'))
+            .then(() => xmsg.send_one('127.0.0.1:3001', 'args', 'hello'))
             .then((r) => {
                 expect(r).to.be.equal('hello');
                 done();
@@ -121,7 +121,7 @@ describe('#index', () => {
 
         it('should reply /hello/ when param not a object', (done) => {
             Promise.resolve()
-            .then(() => xmsg.send_one('127.0.0.1:3001@args', {a: null, b: undefined}))
+            .then(() => xmsg.send_one('127.0.0.1:3001', 'args', {a: null, b: undefined}))
             .then((r) => {
                 // b: undefined is ignored by axon
                 expect(r).to.be.deep.equal({a: null});
@@ -129,23 +129,13 @@ describe('#index', () => {
             })
             .catch((e) => console.log(e));
         });
-
-        it('should reply /parse target error.(addr:undefined, action:undefined)/ when no target', (done) => {
-            Promise.resolve()
-            .then(() => xmsg.send_one('x', 'hello'))
-            .catch((e) => {
-                expect(e.status).to.be.false;
-                expect(e.msg).to.be.equal('parse target error.(addr:undefined, action:undefined)');
-                done();
-            });
-        });
     });
 
     describe('#send_bunch', () => {
         it(`should reply /[ 'hello 3001', 'hello' ]/`, (done) => {
             let targets = [
-                '127.0.0.1:3001@fn',
-                '127.0.0.1:3000@fn'
+                ['127.0.0.1:3001', 'fn'],
+                ['127.0.0.1:3000', 'fn']
             ];
 
             Promise.resolve()

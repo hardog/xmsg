@@ -61,12 +61,8 @@ let req_server = (addr, parsed_data, resolve, cb) => {
     socket.send.apply(socket, parsed_data);
 };
 
-// target like 127.0.0.1:3000@create
-let send_one = (target, data, cb) => {
-    let parsed = parse.parse_target(target);
-    let addr = parsed[0];
-    let action = parsed[1];
-
+// ip like 127.0.0.1:3000, action like: create
+let send_one = (addr, action, data, cb) => {
     if(!addr || !action){
         return Promise.reject({
             msg: `parse target error.(addr:${addr}, action:${action})`,
@@ -91,7 +87,7 @@ exports.send_bunch = (targets, data, cb) => {
     let bunch_promises = [];
 
     _.each(targets, (target) => {
-        bunch_promises.push(send_one(target, data, cb));
+        bunch_promises.push(send_one(target[0], target[1], data, cb));
     });
 
     return Promise.all(bunch_promises);

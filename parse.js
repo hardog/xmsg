@@ -26,14 +26,6 @@ exports.kv_pair = (data) => {
     return [keys, values];
 };
 
-exports.parse_target = (target) => {
-    if(!target || target.indexOf('@') === -1){
-        return [];
-    }
-
-    return target.split('@');
-};
-
 //--------- after received data ----------//
 let real_args = (data) => {
     switch(data){

@@ -61,14 +61,14 @@ let req_server = (addr, parsed_data, resolve, cb) => {
     socket.send.apply(socket, parsed_data);
 };
 
-// target like 127.0.0.1@create
+// target like 127.0.0.1:3000@create
 let send_one = (target, data, cb) => {
     let parsed = parse.parse_target(target);
     let addr = parsed[0];
     let action = parsed[1];
 
     if(!addr || !action){
-        cb({
+        return Promise.reject({
             msg: `parse target error.(addr:${addr}, action:${action})`,
             status: false,
             stack: __filename
@@ -87,6 +87,7 @@ let send_one = (target, data, cb) => {
 };
 exports.send_one = send_one;
 
+// targets like ['127.0.0.1:3000@create', '127.0.0.1:3001@create']
 exports.send_bunch = (targets, data, cb) => {
     let bunch_promises = [];
 

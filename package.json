@@ -1,6 +1,6 @@
 {
   "name": "xmsg",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "cluster app msg center",
   "main": "lib/index.js",
   "scripts": {

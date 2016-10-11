@@ -101,12 +101,12 @@ describe('#index', () => {
 
         it('should reply /parse target error.(addr:, action:fn)/', (done) => {
             Promise.resolve()
-            .then(() => xmsg.send_one('@fn', {a: 1}, (e) => {
+            .then(() => xmsg.send_one('@fn', {a: 1}))
+            .catch((e) => {
                 expect(e.status).to.be.false;
                 expect(e.msg).to.be.equal('parse target error.(addr:, action:fn)');
                 done();
-            }))
-            .catch((e) => console.log(e));
+            });
         });
 
         it('should reply /hello/ when param not a object', (done) => {
@@ -132,12 +132,12 @@ describe('#index', () => {
 
         it('should reply /parse target error.(addr:undefined, action:undefined)/ when no target', (done) => {
             Promise.resolve()
-            .then(() => xmsg.send_one('x', 'hello', (e) => {
+            .then(() => xmsg.send_one('x', 'hello'))
+            .catch((e) => {
                 expect(e.status).to.be.false;
                 expect(e.msg).to.be.equal('parse target error.(addr:undefined, action:undefined)');
                 done();
-            }))
-            .catch((e) => console.log(e));
+            });
         });
     });
 

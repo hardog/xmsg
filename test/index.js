@@ -86,6 +86,22 @@ describe('#index', () => {
             })
             server.emit('error', 'this is an error');
         });
+
+        it('should reply /no action found/', (done) => {
+            let socket = axon.socket('req');
+            socket.connect(3000);
+
+            let parsed_data = ['no-fn', ['a'], 1];
+            parsed_data.push((res) => {
+                socket.close();
+                socket = null;
+                expect(res.status).to.be.false;
+                expect(res.msg).to.be.equal('no action found');
+                done();
+            });
+
+            socket.send.apply(socket, parsed_data);
+        });
     });
 
     describe('#send_one', () => {

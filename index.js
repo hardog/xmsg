@@ -28,6 +28,11 @@ let respond_msg = (args, action) => {
 
     if(_.isFunction(exec_fn)){
         exec_fn(data, reply);
+    }else{
+        reply({
+            msg: 'no action found',
+            status: false
+        });
     }
 };
 

@@ -1,22 +1,20 @@
 {
   "name": "xmsg",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "cluster app msg center",
-  "main": "lib/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha test/*.js",
-    "lint": "./node_modules/.bin/eslint *.js",
     "cover": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec test"
   },
   "dependencies": {
     "axon": "^2.0.2",
-    "lodash": "^4.15.0"
+    "lodash": "^4.15.0",
+    "promise": "~7.1.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "eslint": "^3.5.0",
     "istanbul": "^0.4.5",
-    "mm": "^2.0.0",
     "mocha": "^3.0.2"
   },
   "keywords": [
@@ -25,8 +23,10 @@
     "center",
     "nodejs"
   ],
+  "engines": {
+    "node": "0.10.x || 0.11.x"
+  },
   "author": "hardog",
-  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hardog/xmsg.git"

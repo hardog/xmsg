@@ -1,9 +1,7 @@
-'use strict';
-
-const _ = require('lodash');
+var _ = require('lodash');
 
 //----------- before send data -------------//
-let dereal_args = (data) => {
+var dereal_args = function(data){
     switch(data){
         case null: return '$null$';
         case undefined: return '$undefined$';
@@ -12,13 +10,13 @@ let dereal_args = (data) => {
 };
 exports.dereal_args = dereal_args;
 
-exports.kv_pair = (data) => {
+exports.kv_pair = function(data){
     if(!_.isObject(data)){ 
         return [false, dereal_args(data)]; 
     }
 
-    let keys = [], values = [];
-    for(let k in data) {
+    var keys = [], values = [];
+    for(var k in data) {
         keys.push(k);
         values.push(dereal_args(data[k]));
     }
@@ -27,7 +25,7 @@ exports.kv_pair = (data) => {
 };
 
 //--------- after received data ----------//
-let real_args = (data) => {
+var real_args = function(data){
     switch(data){
         case '$null$': return null;
         case '$undefined$': return undefined;
@@ -36,13 +34,13 @@ let real_args = (data) => {
 };
 exports.real_args = real_args;
 
-let compose_kv = (keys, values) => {
+var compose_kv = function(keys, values){
     if(!keys){ 
         return real_args(values); 
     }
 
-    let data = {};
-    _.each(keys, (v, k) => {
+    var data = {};
+    _.each(keys, function(v, k){
         data[v] = real_args(values[k]);
     });
 
@@ -51,15 +49,15 @@ let compose_kv = (keys, values) => {
 
 // args like [action, keys:[], ...values, reply-cb]
 // action like: a.b which a.b = () => {}
-exports.parse_args = (args) => {
+exports.parse_args = function(args){
     args = args || [];
 
-    let reply = args.pop();
-    let fn_name = (args.shift() || '');
-    let fn_names = fn_name.split('.');
-    let keys = args.shift();
-    let values = (!keys ? args[0] : args);
-    let data = compose_kv(keys, values);
+    var reply = args.pop();
+    var fn_name = (args.shift() || '');
+    var fn_names = fn_name.split('.');
+    var keys = args.shift();
+    var values = (!keys ? args[0] : args);
+    var data = compose_kv(keys, values);
 
     return [reply, fn_names, data];
 };

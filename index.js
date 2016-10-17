@@ -89,7 +89,7 @@ let send_one = (addr, action, data, cb) => {
 };
 exports.send_one = send_one;
 
-// targets like ['127.0.0.1:3000@create', '127.0.0.1:3001@create']
+// targets like [['127.0.0.1:3000', 'create'], ['127.0.0.1:3001', 'create']]
 exports.send_bunch = (targets, data, cb) => {
     let bunch_promises = [];
 

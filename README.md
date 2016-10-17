@@ -56,7 +56,7 @@ xmsg.create_server(3000, {
 // machine address: 127.0.0.1:3001
 // server fn: fn
 // passed data: 'hello'
-xmsg.send_one('127.0.0.1:3001@fn', 'hello', [cb]))
+xmsg.send_one('127.0.0.1:3001', 'fn', 'hello', [cb]))
 ```
 
 ## send_bunch
@@ -64,9 +64,9 @@ xmsg.send_one('127.0.0.1:3001@fn', 'hello', [cb]))
 ```
 // send to multi machine of the cluster
 xmsg.send_bunch([
-    '127.0.0.1:3000@fn',
-    '127.0.0.1:3001@fn',
-    '137.233.222.123:3001@fn'
+    ['127.0.0.1:3000', 'fn'],
+    ['127.0.0.1:3001', 'fn'],
+    ['137.233.222.123:3001', 'fn']
 ], 'hello', [cb]))
 ```
 

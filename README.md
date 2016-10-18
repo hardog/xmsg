@@ -25,14 +25,6 @@ run test coverage:
 $ npm run cover
 ```
 
-# Lint
-
-run lint check:
-```
-$ npm run lint
-```
-
-
 # Usage
 
 ## create_server

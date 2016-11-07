@@ -1,6 +1,7 @@
 var Promise = require('promise');
 var axon  = require('axon');
 var _     = require('lodash');
+var profile = require('./profile');
 var parse = require('./parse');
 
 var respond_msg = function(args, action){
@@ -9,6 +10,10 @@ var respond_msg = function(args, action){
     var reply = parsed[0];
     var fn_names = parsed[1];
     var data = parsed[2];
+    var p = profile.land(data);
+    data = p[1];
+
+    reply = profile.wrap_reply(p[0], reply);
 
     if(!reply || !fn_names || !fn_names[0]){
         var actionstr = fn_names.join('.');
@@ -62,13 +67,14 @@ var req_server = function(addr, parsed_data, resolve, cb){
     parsed_data.push(function(res){
         socket.close();
         socket = null;
-        resolve(res);
+        profile.show(res[0]);
+        resolve(res[1]);
     });
 
     socket.send.apply(socket, parsed_data);
 };
 
-// ip like 127.0.0.1:3000, action like: create
+// addr like 127.0.0.1:3000, action like: create
 var send_one = function(addr, action, data, cb){
     if(!addr || !action){
         return Promise.reject({
@@ -78,6 +84,7 @@ var send_one = function(addr, action, data, cb){
         });
     }
 
+    data = profile.start(addr + '@' + action, data);
     var pair_data = parse.kv_pair(data);
     var parsed_data = [action, pair_data[0]];
 

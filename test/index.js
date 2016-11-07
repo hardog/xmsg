@@ -41,7 +41,7 @@ describe('#index', function(){
                 socket.close();
                 socket = null;
 
-                expect(res).to.be.equal('hello');
+                expect(res[1]).to.be.equal('hello');
                 done();
             });
 
@@ -56,7 +56,7 @@ describe('#index', function(){
             parsed_data.push(function(res){
                 socket.close();
                 socket = null;
-                expect(res).to.be.deep.equal({a: 1});
+                expect(res[1]).to.be.deep.equal({a: 1});
                 done();
             });
 
@@ -71,8 +71,8 @@ describe('#index', function(){
             parsed_data.push(function(res){
                 socket.close();
                 socket = null;
-                expect(res.status).to.be.false;
-                expect(res.msg).to.be.equal('illegal args.(action:, data:{"a":1})');
+                expect(res[1].status).to.be.false;
+                expect(res[1].msg).to.be.equal('illegal args.(action:, data:{"a":1})');
                 done();
             });
 
@@ -95,8 +95,8 @@ describe('#index', function(){
             parsed_data.push(function(res){
                 socket.close();
                 socket = null;
-                expect(res.status).to.be.false;
-                expect(res.msg).to.be.equal('no action found');
+                expect(res[1].status).to.be.false;
+                expect(res[1].msg).to.be.equal('no action found');
                 done();
             });
 

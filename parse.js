@@ -11,11 +11,8 @@ var dereal_args = function(data){
 exports.dereal_args = dereal_args;
 
 exports.kv_pair = function(data){
-    if(!_.isObject(data)){ 
-        return [false, dereal_args(data)]; 
-    }
-
     var keys = [], values = [];
+
     for(var k in data) {
         keys.push(k);
         values.push(dereal_args(data[k]));
@@ -35,11 +32,8 @@ var real_args = function(data){
 exports.real_args = real_args;
 
 var compose_kv = function(keys, values){
-    if(!keys){ 
-        return real_args(values); 
-    }
-
     var data = {};
+    
     _.each(keys, function(v, k){
         data[v] = real_args(values[k]);
     });

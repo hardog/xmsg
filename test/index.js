@@ -147,6 +147,7 @@ describe('#index', function(){
                 return xmsg.send_one('127.0.0.1:3001', 'args', {a: null, b: undefined})
             })
             .then(function(r){
+                console.log('rr', r)
                 // b: undefined is ignored by axon
                 expect(r).to.be.deep.equal({a: null});
                 done();

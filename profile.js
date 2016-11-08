@@ -1,11 +1,10 @@
 var _     = require('lodash');
 
 var start = function(tag, args){
-    var ts = Date.now();
-    var hr = process.hrtime();
     var profile = {
-        _tag: tag + '-' + ts + '-' + hr[1],
-        _time: ts
+        _target: tag,
+        _start: (new Date()).toString(),
+        _time: Date.now()
     };
 
     // data
@@ -20,17 +19,19 @@ var start = function(tag, args){
 var land = function(args){
     var ts = Date.now();
     var profile = {
-        _tag: args._tag || 'NONE',
+        _target: args._target || 'NONE',
         _network1: ts - args._time || 0,
-        _fn: ts
+        _fn: ts,
+        _start: args._start
     };
 
     if(args._un !== undefined){
         return [profile, args._un];
     }
 
-    delete args._tag;
+    delete args._target;
     delete args._time;
+    delete args._start;
 
     return [profile, args];
 };
@@ -47,7 +48,9 @@ var wrap_reply = function(p, reply){
 
 var show = function(p){
     p._network2 = Date.now() - p._network2 || 0;
-    console.log('Tag: ' + p._tag + 
+    console.log('Service: ' + (process.title || 'None') +
+                ', Target: ' + p._target + 
+                ', Start: ' + p._start +
                 ', Network1: ' + p._network1 + 
                 'ms, Fn: ' + p._fn + 
                 'ms, Network2: ' + p._network2 + 

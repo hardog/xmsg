@@ -22,7 +22,8 @@ var land = function(args){
         _target: args._target || 'NONE',
         _network1: ts - args._time || 0,
         _fn: ts,
-        _start: args._start
+        _start: args._start,
+        _attach: args._attach || ''
     };
 
     if(args._un !== undefined){
@@ -32,6 +33,7 @@ var land = function(args){
     delete args._target;
     delete args._time;
     delete args._start;
+    delete args._attach;
 
     return [profile, args];
 };
@@ -54,7 +56,7 @@ var show = function(p){
                 ', Network1: ' + p._network1 + 
                 'ms, Fn: ' + p._fn + 
                 'ms, Network2: ' + p._network2 + 
-                'ms, Attach: ' + (process.attach || 'None'));
+                'ms, Attach: ' + (p._attach || 'None'));
 };
 
 exports.start = start;

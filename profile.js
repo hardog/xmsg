@@ -54,7 +54,7 @@ var show = function(p){
                 ', Network1: ' + p._network1 + 
                 'ms, Fn: ' + p._fn + 
                 'ms, Network2: ' + p._network2 + 
-                'ms');
+                'ms, Attach: ' + (process.attach || 'None'));
 };
 
 exports.start = start;

@@ -50,13 +50,13 @@ var wrap_reply = function(p, reply){
 
 var show = function(p){
     p._network2 = Date.now() - p._network2 || 0;
-    console.log('Tag: ' + (process.title || 'None') +
-                ', Target: ' + p._target + 
-                ', Start: ' + p._start +
-                ', Network1: ' + p._network1 + 
-                'ms, Fn: ' + p._fn + 
-                'ms, Network2: ' + p._network2 + 
-                'ms, Attach: ' + (p._attach || 'None'));
+    console.log('Tag:' + (process.title || 'None') +
+                ' Target:' + p._target + 
+                ' Start:' + p._start +
+                ' Network1:' + p._network1 + 
+                'ms Fn:' + p._fn + 
+                'ms Network2:' + p._network2 + 
+                'ms Attach:' + (p._attach || 'None'));
 };
 
 exports.start = start;

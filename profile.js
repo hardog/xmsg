@@ -50,7 +50,7 @@ var wrap_reply = function(p, reply){
 
 var show = function(p){
     p._network2 = Date.now() - p._network2 || 0;
-    console.log('Service: ' + (process.title || 'None') +
+    console.log('Tag: ' + (process.title || 'None') +
                 ', Target: ' + p._target + 
                 ', Start: ' + p._start +
                 ', Network1: ' + p._network1 + 

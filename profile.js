@@ -20,7 +20,7 @@ var land = function(args){
     var ts = Date.now();
     var profile = {
         _target: args._target || 'NONE',
-        _network1: ts - args._time || 0,
+        _net1: ts - args._time || 0,
         _fn: ts,
         _start: args._start,
         _attach: args._attach || ''
@@ -42,7 +42,7 @@ var wrap_reply = function(p, reply){
     return function(data){
         var ts = Date.now();
         p._fn = ts - p._fn || 0;
-        p._network2 = ts;
+        p._net2 = ts;
 
         reply([p, data]);
     };
@@ -53,9 +53,9 @@ var show = function(p){
     console.log('Tag:' + (process.title || 'None') +
                 ' Target:' + p._target + 
                 ' Start:' + p._start +
-                ' Network1:' + p._network1 + 
+                ' Net1:' + p._net1 + 
                 'ms Fn:' + p._fn + 
-                'ms Network2:' + p._network2 + 
+                'ms Net2:' + p._net2 + 
                 'ms Attach:' + (p._attach || 'None'));
 };
 

@@ -153,6 +153,20 @@ describe('#index', function(){
             })
             .catch(function(e){console.log(e)});
         });
+
+        it('should show on terminal', function(done){
+            Promise.resolve()
+            .then(function(){
+                return xmsg.send_one('127.0.0.1:3001', 'args', 'xx')
+            })
+            .then(function(){
+                return xmsg.send_one('127.0.0.1:3001', 'args', 'xsx')
+            })
+            .then(function(){
+                setTimeout(done, 1000);
+            })
+            .catch(function(e){console.log(e)});
+        });
     });
 
     describe('#send_bunch', function(){

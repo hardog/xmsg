@@ -48,9 +48,28 @@ var wrap_reply = function(p, reply){
     };
 };
 
+var buf = [];
+var timer = null;
+// flush function
+var flush = function(){
+    timer = null;
+    console.log(buf.join('\n'));
+    buf.length = 0;
+}
+
+// write function
+var write = function(str){
+    if(timer === null){
+      timer = setTimeout(flush, 1000);
+    }
+
+    buf.push(str);
+}
+
+
 var show = function(p){
     p._net2 = Date.now() - p._net2 || 0;
-    console.log('Tag:' + (process.title || 'None') +
+    write('Tag:' + (process.title || 'None') +
                 ' Target:' + p._target + 
                 ' Start:' + p._start +
                 ' Net1:' + p._net1 + 
@@ -58,6 +77,7 @@ var show = function(p){
                 'ms Net2:' + p._net2 + 
                 'ms Attach:' + (p._attach || 'None'));
 };
+
 
 exports.start = start;
 exports.land = land;

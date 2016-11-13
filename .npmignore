@@ -1,0 +1,6 @@
+benchmark/
+example/
+test/
+coverage/
+.gitignore
+.travis.yml

@@ -1,4 +1,4 @@
-var _     = require('lodash');
+var _ = require('lodash');
 
 var start = function(tag, args){
     var profile = {
@@ -49,7 +49,7 @@ var wrap_reply = function(p, reply){
 };
 
 var show = function(p){
-    p._network2 = Date.now() - p._network2 || 0;
+    p._net2 = Date.now() - p._net2 || 0;
     console.log('Tag:' + (process.title || 'None') +
                 ' Target:' + p._target + 
                 ' Start:' + p._start +

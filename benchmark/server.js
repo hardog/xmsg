@@ -1,7 +1,8 @@
 var xmsg = require('../');
+var size = process.argv[2];
 
 var n = 0;
-var ops = 10000;
+var ops = 1000;
 var prev = undefined;
 
 xmsg.create_server(3001, {
@@ -15,8 +16,8 @@ xmsg.create_server(3001, {
             var ms = Date.now() - prev;
             var s = ms / 1000;
             var persec = parseInt(ops / s || 0);
-            console.log(persec + ' op/s 8kb!');
-            console.log('total ' + ops + 'ops  in ' + s + 's!');
+            console.log(persec + ' op/s ' + size + 'kb!');
+            console.log('total ' + ops + 'ops in ' + s + 's!');
             prev = Date.now();
             process.exit(0);
         }

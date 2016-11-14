@@ -1,8 +1,28 @@
 var Promise = require('promise');
 var axon  = require('axon');
-var _     = require('lodash');
+var _  = require('lodash');
 var profile = require('./profile');
 var parse = require('./parse');
+
+var settings = {
+    profile: false,
+    hwm: Infinity,
+    socks: {},
+    servers: {}
+};
+exports.set = function(k, v){
+    if(k === 'timeout'){
+        return profile.set(k, v);
+    }
+
+    settings[k] = v;
+};
+
+exports.reset = function(){
+    settings.profile = false;
+    settings.hwm = Infinity;
+    profile.set('timeout', 1000);
+};
 
 var respond_msg = function(args, action){
     action = action || {};
@@ -10,10 +30,12 @@ var respond_msg = function(args, action){
     var reply = parsed[0];
     var fn_names = parsed[1];
     var data = parsed[2];
-    var p = profile.land(data);
-    data = p[1];
 
-    reply = profile.wrap_reply(p[0], reply);
+    if(settings.profile){
+        var p = profile.land(data);
+        data = p[1];
+        reply = profile.wrap_reply(p[0], reply);
+    }
 
     if(!reply || !fn_names || !fn_names[0]){
         var actionstr = fn_names.join('.');
@@ -43,39 +65,49 @@ var respond_msg = function(args, action){
     }
 };
 
-var empty_fn = function(e){console.error(e)};
-exports.create_server = function(port, action, cb){
-    var socket = axon.socket('rep');
-    cb = cb || empty_fn;
+exports.create_server = function(port, action){
+    var server;
+    if(!settings.servers[port]){
+        server = axon.socket('rep');
+        server.bind(port);
+        settings.servers[port] = server;
+    }else{
+        server = settings.servers[port];
+    }
 
-    socket.bind(port);
-    socket.on('error', cb);
-    socket.on('message', function(){
+    server.on('message', function(){
         respond_msg(_.toArray(arguments), action);
     });
 
-    return socket;
+    return server;
 };
 
-var req_server = function(addr, parsed_data, resolve, cb){
-    cb = cb || empty_fn;
+var req_server = function(addr, parsed_data, resolve){
     parsed_data = parsed_data || [];
 
-    var socket = axon.socket('req');
-    socket.connect('tcp://'+ addr);
-    socket.on('error', cb);
+    var socket;
+    if(!settings.socks[addr]){
+        settings.socks[addr] = axon.socket('req');
+        socket = settings.socks[addr];
+        socket.set('hwm', settings.hwm);
+        socket.connect('tcp://'+ addr);
+    }else{
+        socket = settings.socks[addr];
+    }
+
     parsed_data.push(function(res){
-        socket.close();
-        socket = null;
-        profile.show(res[0]);
-        resolve(res[1]);
+        if(settings.profile){
+            profile.show(res[0]);
+            return resolve(res[1]);
+        }
+        resolve(res);
     });
 
     socket.send.apply(socket, parsed_data);
 };
 
 // addr like 127.0.0.1:3000, action like: create
-var send_one = function(addr, action, data, cb){
+var send_one = function(addr, action, data){
     if(!addr || !action){
         return Promise.reject({
             msg: 'parse target error.(addr:'+ addr +', action:'+ action +')',
@@ -84,24 +116,27 @@ var send_one = function(addr, action, data, cb){
         });
     }
 
-    data = profile.start(addr + '@' + action, data);
+    if(settings.profile){
+        data = profile.start(addr + '@' + action, data);
+    }
+
     var pair_data = parse.kv_pair(data);
     var parsed_data = [action, pair_data[0]];
 
     parsed_data = parsed_data.concat(pair_data[1]);
 
     return new Promise(function(resolve){
-        req_server(addr, parsed_data, resolve, cb);
+        req_server(addr, parsed_data, resolve);
     });
 };
 exports.send_one = send_one;
 
 // targets like [['127.0.0.1:3000', 'create'], ['127.0.0.1:3001', 'create']]
-exports.send_bunch = function(targets, data, cb){
+exports.send_bunch = function(targets, data){
     var bunch_promises = [];
 
     _.each(targets, function(target){
-        bunch_promises.push(send_one(target[0], target[1], data, cb));
+        bunch_promises.push(send_one(target[0], target[1], data));
     });
 
     return Promise.all(bunch_promises);

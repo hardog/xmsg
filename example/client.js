@@ -6,4 +6,5 @@ var targets = [
     ['127.0.0.1:3003', 'fn']
 ];
 
+xmsg.set('profile', true);
 xmsg.send_bunch(targets, 'hello');

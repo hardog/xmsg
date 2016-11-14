@@ -1,4 +1,12 @@
 var _ = require('lodash');
+var os = require('os');
+
+var settings = {
+    timeout: 1000
+};
+exports.set = function(k, v){
+    settings[k] = v || 1000;
+};
 
 var start = function(tag, args){
     var profile = {
@@ -60,16 +68,16 @@ var flush = function(){
 // write function
 var write = function(str){
     if(timer === null){
-      timer = setTimeout(flush, 1000);
+      timer = setTimeout(flush, settings.timeout);
     }
 
     buf.push(str);
 }
 
-
 var show = function(p){
     p._net2 = Date.now() - p._net2 || 0;
     write('Tag:' + (process.title || 'None') +
+                ' Host:' + os.hostname() +
                 ' Target:' + p._target + 
                 ' Start:' + p._start +
                 ' Net1:' + p._net1 + 
@@ -77,7 +85,6 @@ var show = function(p){
                 'ms Net2:' + p._net2 + 
                 'ms Attach:' + (p._attach || 'None'));
 };
-
 
 exports.start = start;
 exports.land = land;

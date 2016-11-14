@@ -41,7 +41,7 @@ describe('#index', function(){
                 socket.close();
                 socket = null;
 
-                expect(res[1]).to.be.equal('hello');
+                expect(res).to.be.equal('hello');
                 done();
             });
 
@@ -56,7 +56,7 @@ describe('#index', function(){
             parsed_data.push(function(res){
                 socket.close();
                 socket = null;
-                expect(res[1]).to.be.deep.equal({a: 1});
+                expect(res).to.be.deep.equal({a: 1});
                 done();
             });
 
@@ -71,20 +71,12 @@ describe('#index', function(){
             parsed_data.push(function(res){
                 socket.close();
                 socket = null;
-                expect(res[1].status).to.be.false;
-                expect(res[1].msg).to.be.equal('illegal args.(action:, data:{"a":1})');
+                expect(res.status).to.be.false;
+                expect(res.msg).to.be.equal('illegal args.(action:, data:{"a":1})');
                 done();
             });
 
             socket.send.apply(socket, parsed_data);
-        });
-
-        it('should console /this is an error/', function(done){
-            console.error = function(e){
-                expect(e).to.be.equal('this is an error');
-                done();
-            };
-            server.emit('error', 'this is an error');
         });
 
         it('should reply /no action found/', function(done){
@@ -95,8 +87,8 @@ describe('#index', function(){
             parsed_data.push(function(res){
                 socket.close();
                 socket = null;
-                expect(res[1].status).to.be.false;
-                expect(res[1].msg).to.be.equal('no action found');
+                expect(res.status).to.be.false;
+                expect(res.msg).to.be.equal('no action found');
                 done();
             });
 
@@ -113,6 +105,61 @@ describe('#index', function(){
             .then(function(r){
                 expect(r).to.be.equal('hello 3001');
                 done();
+            })
+            .catch(function(e){console.log(e)});
+        });
+
+        it('should work when use profile', function(done){
+            var fakeConsole = console.log;
+            console.log = function(msg){
+                expect(/Host:/.test(msg)).to.be.true;
+            };
+
+            xmsg.set('profile', true);
+            xmsg.set('timeout', 1);
+            xmsg.create_server(3002, {
+                fn: function(data, res){res('hello 3002')}
+            });
+            Promise.resolve()
+            .then(function(){
+                return xmsg.send_one('127.0.0.1:3002', 'fn', {a: 1})
+            })
+            .then(function(r){
+                expect(r).to.be.equal('hello 3002');
+                xmsg.reset();
+                setTimeout(function(){
+                    console.log = fakeConsole;
+                    done();
+                }, 2);
+            })
+            .catch(function(e){console.log(e)});
+        });
+
+        it('should work when use profile send String', function(done){
+            var fakeConsole = console.log;
+            console.log = function(msg){
+                expect(/Host:/.test(msg)).to.be.true;
+            };
+
+            xmsg.set('profile', true);
+            xmsg.set('timeout', 1);
+            xmsg.create_server(3003, {
+                fn: function(data, res){res('hello 3003')}
+            });
+            xmsg.create_server(3003, {
+                fn: function(data, res){res('hello 3003')}
+            });
+            Promise.resolve()
+            .then(function(){
+                return xmsg.send_one('127.0.0.1:3003', 'fn', 'hello')
+            })
+            .then(function(r){
+                expect(r).to.be.equal('hello 3003');
+                xmsg.reset();
+                setTimeout(function(){
+                    console.log = fakeConsole;
+                    done();
+                }, 2);
             })
             .catch(function(e){console.log(e)});
         });

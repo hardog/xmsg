@@ -1,11 +1,11 @@
 {
   "name": "xmsg",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "cluster app msg center",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha test/*.js",
-    "cover": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec test"
+    "cover": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec test"
   },
   "dependencies": {
     "axon": "^2.0.2",

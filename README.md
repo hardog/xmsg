@@ -13,6 +13,14 @@ cluster app msg communication center!
 `$ npm install xmsg -g`
 
 
+# Benchmark
+
+```
+~9000 op/s 2kb!
+~5000 op/s 8kb!
+```
+
+
 # Test
 
 run test:

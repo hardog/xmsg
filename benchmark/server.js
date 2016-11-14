@@ -2,9 +2,10 @@ var xmsg = require('../');
 var size = process.argv[2];
 
 var n = 0;
-var ops = 1000;
+var ops = 5000;
 var prev = undefined;
 
+xmsg.set('profile', false);
 xmsg.create_server(3001, {
     fn: function(data, res){
 

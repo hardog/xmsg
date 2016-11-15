@@ -116,7 +116,8 @@ describe('#index', function(){
             };
 
             xmsg.set('profile', true);
-            xmsg.set('timeout', 1);
+            // default 1000 when no timeout set
+            xmsg.set('timeout', 10);
             xmsg.create_server(3002, {
                 fn: function(data, res){res('hello 3002')}
             });
@@ -177,6 +178,7 @@ describe('#index', function(){
         });
 
         it('should reply /hello/ when param not a object', function(done){
+
             Promise.resolve()
             .then(function(){
                 return xmsg.send_one('127.0.0.1:3001', 'args', 'hello');
@@ -201,18 +203,66 @@ describe('#index', function(){
             .catch(function(e){console.log(e)});
         });
 
-        it('should show on terminal', function(done){
-            Promise.resolve()
-            .then(function(){
-                return xmsg.send_one('127.0.0.1:3001', 'args', 'xx')
-            })
-            .then(function(){
-                return xmsg.send_one('127.0.0.1:3001', 'args', 'xsx')
-            })
-            .then(function(){
-                setTimeout(done, 1000);
-            })
-            .catch(function(e){console.log(e)});
+        it('should rm cache when server emit /socket error/', function(done){
+            xmsg.reset();
+            xmsg.set('timeout', 1);
+            xmsg.create_server(3004, {
+                fn: function(data, res){res('hello 3004')}
+            });
+
+            setTimeout(function(){
+                var servers = xmsg._get('servers');
+                expect(servers['3004'] !== undefined).to.be.true;
+                var sock = servers['3004'];
+                sock.emit('socket error');
+                expect(servers['3004'] !== undefined).to.be.false;
+                done();
+            }, 2);
+        });
+
+        it('should rm cache when server emit /disconnect/', function(done){
+            xmsg.reset();
+            xmsg.set('timeout', 1);
+            xmsg.create_server(3005, {
+                fn: function(data, res){res('hello 3005')}
+            });
+
+            setTimeout(function(){
+                var servers = xmsg._get('servers');
+                expect(servers['3005'] !== undefined).to.be.true;
+                var sock = servers['3005'];
+                sock.emit('disconnect');
+                expect(servers['3005'] !== undefined).to.be.false;
+                done();
+            }, 2);
+        });
+
+        it('should rm cache when socket emit /socket error/', function(done){
+            xmsg.reset();
+            xmsg.send_one('127.0.0.1:3006', 'args', 'hello 3006');
+
+            process.nextTick(function(){
+                var socks = xmsg._get('socks');
+                expect(socks['127.0.0.1:3006'] !== undefined).to.be.true;
+                var sock = socks['127.0.0.1:3006'];
+                sock.emit('socket error');
+                expect(socks['127.0.0.1:3006'] !== undefined).to.be.false;
+                done();
+            });
+        });
+
+        it('should rm cache when socket emit /close/', function(done){
+            xmsg.reset();
+            xmsg.send_one('127.0.0.1:3007', 'args', 'hello 3007');
+
+            process.nextTick(function(){
+                var socks = xmsg._get('socks');
+                expect(socks['127.0.0.1:3007'] !== undefined).to.be.true;
+                var sock = socks['127.0.0.1:3007'];
+                sock.emit('close');
+                expect(socks['127.0.0.1:3007'] !== undefined).to.be.false;
+                done();
+            });
         });
     });
 

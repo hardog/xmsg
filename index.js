@@ -10,6 +10,12 @@ var settings = {
     socks: {},
     servers: {}
 };
+
+// for test
+exports._get = function(k){
+    return settings[k];
+};
+
 exports.set = function(k, v){
     if(k === 'timeout'){
         return profile.set(k, v);
@@ -21,6 +27,8 @@ exports.set = function(k, v){
 exports.reset = function(){
     settings.profile = false;
     settings.hwm = Infinity;
+    settings.socks = {};
+    settings.servers = {};
     profile.set('timeout', 1000);
 };
 
@@ -66,13 +74,14 @@ var respond_msg = function(args, action){
 };
 
 exports.create_server = function(port, action){
-    var server;
-    if(!settings.servers[port]){
+    var server = settings.servers[port];
+
+    if(!server){
         server = axon.socket('rep');
         server.bind(port);
         settings.servers[port] = server;
-    }else{
-        server = settings.servers[port];
+        server.on('socket error', function(){settings.servers[port] = undefined;});
+        server.on('disconnect', function(){settings.servers[port] = undefined;});
     }
 
     server.on('message', function(){
@@ -85,14 +94,14 @@ exports.create_server = function(port, action){
 var req_server = function(addr, parsed_data, resolve){
     parsed_data = parsed_data || [];
 
-    var socket;
-    if(!settings.socks[addr]){
+    var socket = settings.socks[addr];
+    if(!socket){
         settings.socks[addr] = axon.socket('req');
         socket = settings.socks[addr];
         socket.set('hwm', settings.hwm);
         socket.connect('tcp://'+ addr);
-    }else{
-        socket = settings.socks[addr];
+        socket.on('socket error', function(){settings.socks[addr] = undefined;});
+        socket.on('close', function(){settings.socks[addr] = undefined;});
     }
 
     parsed_data.push(function(res){

@@ -2,8 +2,9 @@ var xmsg = require('../');
 var size = process.argv[2];
 
 var n = 0;
-var ops = 2000000000;
+var ops = 2000;
 var prev = undefined;
+var r;
 
 xmsg.set('profile', false);
 xmsg.create_server(3001, {
@@ -17,12 +18,23 @@ xmsg.create_server(3001, {
             var ms = Date.now() - prev;
             var s = ms / 1000;
             var persec = parseInt(ops / s || 0);
+            if(!r) r = persec;
+            else if(r < persec) r = persec;
             console.log(persec + ' op/s ' + size + 'kb!');
-            console.log('total ' + ops + 'ops in ' + s + 's!');
-            prev = Date.now();
-            process.exit(0);
+            console.log(new Date() + ', total:' + ops + 'ops in ' + s + 's!');
+            var mc = process.memoryUsage();
+            console.log(mc.rss, mc.heapTotal, mc.heapUsed);
+            prev = undefined;
+            n = 0;
         }
 
         res();
     }
 });
+
+function done(){
+    console.log('max is:', r, ' ops/s, ', size, 'kb');
+    process.exit(0);
+}
+
+process.on('SIGINT', done);

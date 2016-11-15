@@ -16,16 +16,9 @@ cluster app msg communication center!
 # Benchmark
 
 ```
-~9000 op/s 2kb!
-~5000 op/s 8kb!
-
-// 200000
-17403 op/s 2kb!
-total 200000ops in 11.492s!
-
-// 2000000
-17443 op/s 2kb!
-total 2000000ops in 114.658s!
+// 4C4G  
+max: 41800 ops/s
+min: 9000 ops/s
 
 ```
 

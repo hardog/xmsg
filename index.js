@@ -100,6 +100,7 @@ var req_server = function(addr, parsed_data, resolve){
         socket = settings.socks[addr];
         socket.set('hwm', settings.hwm);
         socket.connect('tcp://'+ addr);
+        socket.on('connect', function(sock){sock.setKeepAlive(true);});
         socket.on('socket error', function(){settings.socks[addr] = undefined;});
         socket.on('close', function(){settings.socks[addr] = undefined;});
     }

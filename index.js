@@ -7,7 +7,8 @@ var parse = require('./parse');
 var settings = {
     profile: false,
     hwm: Infinity,
-    socks: {},
+    pool_size: 20,
+    socks: [],
     servers: {}
 };
 
@@ -95,14 +96,20 @@ var req_server = function(addr, parsed_data, resolve){
     parsed_data = parsed_data || [];
 
     var socket = settings.socks[addr];
-    if(!socket){
-        settings.socks[addr] = axon.socket('req');
-        socket = settings.socks[addr];
+    if(!socket || socket.length < settings.pool_size){
+        settings.socks[addr] = (!socket ? [] : socket);
+        socket = axon.socket('req');
+
+        settings.socks[addr].push(socket);
         socket.set('hwm', settings.hwm);
         socket.connect('tcp://'+ addr);
         socket.on('connect', function(sock){sock.setKeepAlive(true);});
-        socket.on('socket error', function(){settings.socks[addr] = undefined;});
-        socket.on('close', function(){settings.socks[addr] = undefined;});
+        socket.on('socket error', function(){settings.socks[addr] = [];});
+        socket.on('close', function(){settings.socks[addr] = [];});
+    }else{
+        // like pool size
+        var len = socket.length;
+        socket = socket[_.random(0, len - 1)];
     }
 
     parsed_data.push(function(res){

@@ -243,10 +243,10 @@ describe('#index', function(){
 
             process.nextTick(function(){
                 var socks = xmsg._get('socks');
-                expect(socks['127.0.0.1:3006'] !== undefined).to.be.true;
-                var sock = socks['127.0.0.1:3006'];
+                expect(socks['127.0.0.1:3006'].length).to.be.equal(1);
+                var sock = socks['127.0.0.1:3006'][0];
                 sock.emit('socket error');
-                expect(socks['127.0.0.1:3006'] !== undefined).to.be.false;
+                expect(socks['127.0.0.1:3006'].length).to.be.equal(0);
                 done();
             });
         });
@@ -257,10 +257,38 @@ describe('#index', function(){
 
             process.nextTick(function(){
                 var socks = xmsg._get('socks');
-                expect(socks['127.0.0.1:3007'] !== undefined).to.be.true;
-                var sock = socks['127.0.0.1:3007'];
+                expect(socks['127.0.0.1:3007'].length).to.be.equal(1);
+                var sock = socks['127.0.0.1:3007'][0];
                 sock.emit('close');
-                expect(socks['127.0.0.1:3007'] !== undefined).to.be.false;
+                expect(socks['127.0.0.1:3007'].length).to.be.equal(0);
+                done();
+            });
+        });
+
+        it('should use exist connection = 1', function(done){
+            xmsg.reset();
+            xmsg.set('pool_size', 1);
+
+            Promise.resolve()
+            .then(() => xmsg.send_one('127.0.0.1:3000', 'fn', 'hello whatever'))
+            .then((r) => {
+                expect(r).to.be.equal('hello');
+                done();
+            })
+            .catch((e) => console.error(e));
+        });
+
+        it('should use exist connection = 2', function(done){
+            xmsg.reset();
+            xmsg.set('pool_size', 2);
+
+            xmsg.send_one('127.0.0.1:3000', 'fn', 'hello whatever')
+            xmsg.send_one('127.0.0.1:3000', 'fn', 'hello whatever')
+            xmsg.send_one('127.0.0.1:3000', 'fn', 'hello whatever')
+
+            process.nextTick(function(){
+                var socks = xmsg._get('socks');
+                expect(socks['127.0.0.1:3000'].length).to.be.equal(2);
                 done();
             });
         });

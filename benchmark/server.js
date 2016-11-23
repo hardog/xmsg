@@ -9,7 +9,6 @@ var r;
 xmsg.set('profile', false);
 xmsg.create_server(3001, {
     fn: function(data, res){
-
         if(!prev){
             prev = Date.now();
         }

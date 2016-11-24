@@ -69,7 +69,7 @@ when client loss connection with server, msg would be store in queue, hwm is the
 
 this would be clear previous set(profile, pool_size, hwm).
 
-## create_server
+## xmsg.create_server
 
 ```
 // local machine create a server listen port 3000
@@ -83,7 +83,7 @@ xmsg.create_server(3000, {
 });
 ```
 
-## send_one
+## xmsg.send_one
 
 ```
 // send to one of the cluster machine
@@ -93,7 +93,7 @@ xmsg.create_server(3000, {
 xmsg.send_one('127.0.0.1:3001', 'fn', 'hello'))
 ```
 
-## send_bunch
+## xmsg.send_bunch
 
 ```
 // send to multi machine of the cluster

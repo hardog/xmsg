@@ -82,7 +82,6 @@ exports.create_server = function(port, action){
         server.bind(port);
         settings.servers[port] = server;
         server.on('socket error', function(){settings.servers[port] = undefined;});
-        server.on('disconnect', function(){settings.servers[port] = undefined;});
     }
 
     server.on('message', function(){
@@ -100,12 +99,11 @@ var req_server = function(addr, parsed_data, resolve){
         settings.socks[addr] = (!socket ? [] : socket);
         socket = axon.socket('req');
 
-        settings.socks[addr].push(socket);
+        var index = settings.socks[addr].push(socket);
         socket.set('hwm', settings.hwm);
         socket.connect('tcp://'+ addr);
         socket.on('connect', function(sock){sock.setKeepAlive(true);});
-        socket.on('socket error', function(){settings.socks[addr] = [];});
-        socket.on('close', function(){settings.socks[addr] = [];});
+        socket.on('socket error', function(e){settings.socks[addr].splice(index - 1, 1);});
     }else{
         // like pool size
         var len = socket.length;

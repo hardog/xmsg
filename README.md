@@ -17,8 +17,8 @@ cluster app msg communication center!
 
 ```
 // 4C4G  
-max: 41800 ops/s
-min: 9000 ops/s
+max: 36432 ops/s
+min: 27531 ops/s
 
 ```
 

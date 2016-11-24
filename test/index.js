@@ -220,47 +220,17 @@ describe('#index', function(){
             }, 2);
         });
 
-        it('should rm cache when server emit /disconnect/', function(done){
-            xmsg.reset();
-            xmsg.set('timeout', 1);
-            xmsg.create_server(3005, {
-                fn: function(data, res){res('hello 3005')}
-            });
-
-            setTimeout(function(){
-                var servers = xmsg._get('servers');
-                expect(servers['3005'] !== undefined).to.be.true;
-                var sock = servers['3005'];
-                sock.emit('disconnect');
-                expect(servers['3005'] !== undefined).to.be.false;
-                done();
-            }, 2);
-        });
-
         it('should rm cache when socket emit /socket error/', function(done){
             xmsg.reset();
-            xmsg.send_one('127.0.0.1:3006', 'args', 'hello 3006');
+            xmsg.send_one('127.0.0.1:3000', 'args', 'hello 30061');
+            xmsg.send_one('127.0.0.1:3000', 'args', 'hello 30062');
 
             process.nextTick(function(){
                 var socks = xmsg._get('socks');
-                expect(socks['127.0.0.1:3006'].length).to.be.equal(1);
-                var sock = socks['127.0.0.1:3006'][0];
+                expect(socks['127.0.0.1:3000'].length).to.be.equal(2);
+                var sock = socks['127.0.0.1:3000'][0];
                 sock.emit('socket error');
-                expect(socks['127.0.0.1:3006'].length).to.be.equal(0);
-                done();
-            });
-        });
-
-        it('should rm cache when socket emit /close/', function(done){
-            xmsg.reset();
-            xmsg.send_one('127.0.0.1:3007', 'args', 'hello 3007');
-
-            process.nextTick(function(){
-                var socks = xmsg._get('socks');
-                expect(socks['127.0.0.1:3007'].length).to.be.equal(1);
-                var sock = socks['127.0.0.1:3007'][0];
-                sock.emit('close');
-                expect(socks['127.0.0.1:3007'].length).to.be.equal(0);
+                expect(socks['127.0.0.1:3000'].length).to.be.equal(1);
                 done();
             });
         });

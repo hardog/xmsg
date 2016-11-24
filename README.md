@@ -36,7 +36,7 @@ min: 27531 ops/s
 
 run test:
 ```
-$ npm run test
+$ npm test
 ```
 
 run test coverage:

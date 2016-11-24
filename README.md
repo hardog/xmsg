@@ -14,7 +14,7 @@ cluster app msg communication center!
 - performance log
 - log cache
 - connection pool size
-- msg queue set when loss connection
+- msg queue size set when loss connection
 
 
 # Install

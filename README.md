@@ -10,7 +10,7 @@ cluster app msg communication center!
 # Features
 
 - create listen server
-- send to one/bunch client
+- send to one/bunch server
 - performance log
 - log cache
 - connection pool size

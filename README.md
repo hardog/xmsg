@@ -7,6 +7,15 @@
 
 cluster app msg communication center!
 
+# Features
+
+- create listen server
+- send to one/bunch client
+- performance log
+- log cache
+- connection pool size
+- msg queue set when loss connection
+
 
 # Install
 
@@ -38,6 +47,28 @@ $ npm run cover
 
 # Usage
 
+## xmsg.set('profile', true), default is false
+
+```
+Tag:api Host:v10-2-23-23.hx Target:10.2.21.186:8103@file.get Start:Thu Nov 24 2016 11:57:38 GMT+0800 (CST) Net1:147ms Fn:1ms Net2:6ms Attach:None
+
+Net1: the time from client to server
+Fn: server deal through time
+Net2: the time from server to client
+```
+
+## xmsg.set('pool_size', 100), default is 20
+
+pool size for client connection to prevent lots of request use one connection
+
+## xmsg.set('hwm', 1000), default is Infinity
+
+when client loss connection with server, msg would be store in queue, hwm is the queue size
+
+## xmsg.reset()
+
+this would be clear previous set(profile, pool_size, hwm).
+
 ## create_server
 
 ```
@@ -49,7 +80,7 @@ xmsg.create_server(3000, {
     multi: {
         fn: (data, reply) => reply(data)
     }
-}, [cb]);
+});
 ```
 
 ## send_one
@@ -59,7 +90,7 @@ xmsg.create_server(3000, {
 // machine address: 127.0.0.1:3001
 // server fn: fn
 // passed data: 'hello'
-xmsg.send_one('127.0.0.1:3001', 'fn', 'hello', [cb]))
+xmsg.send_one('127.0.0.1:3001', 'fn', 'hello'))
 ```
 
 ## send_bunch
@@ -70,7 +101,7 @@ xmsg.send_bunch([
     ['127.0.0.1:3000', 'fn'],
     ['127.0.0.1:3001', 'fn'],
     ['137.233.222.123:3001', 'fn']
-], 'hello', [cb]))
+], 'hello'))
 ```
 
 

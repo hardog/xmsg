@@ -240,7 +240,7 @@ describe('#index', function(){
             xmsg.set('pool_size', 1);
 
             Promise.resolve()
-            .then(function(){xmsg.send_one('127.0.0.1:3000', 'fn', 'hello whatever')})
+            .then(function(){return xmsg.send_one('127.0.0.1:3000', 'fn', 'hello whatever')})
             .then(function(r){
                 expect(r).to.be.equal('hello');
                 done();

@@ -240,12 +240,12 @@ describe('#index', function(){
             xmsg.set('pool_size', 1);
 
             Promise.resolve()
-            .then(() => xmsg.send_one('127.0.0.1:3000', 'fn', 'hello whatever'))
+            .then(function(){xmsg.send_one('127.0.0.1:3000', 'fn', 'hello whatever')})
             .then((r) => {
                 expect(r).to.be.equal('hello');
                 done();
             })
-            .catch((e) => console.error(e));
+            .catch(function(e){console.error(e)});
         });
 
         it('should use exist connection = 2', function(done){

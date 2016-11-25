@@ -1,0 +1,6 @@
+# v1.0.22
+
+- change `xmsg.set('timeout', 1)` to `xmsg.set('q_timeout', 1)`
+- add `xmsg.send_bunch2` method
+- add `xmsg.set('sock_timeout', 1)` setting
+- add `xmsg.set('keep_alive', true)` setting

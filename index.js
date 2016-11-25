@@ -7,6 +7,8 @@ var parse = require('./parse');
 var settings = {
     profile: false,
     hwm: Infinity,
+    keep_alive: false,
+    sock_timeout: 1000,
     pool_size: 20,
     socks: [],
     servers: {}
@@ -30,6 +32,9 @@ exports.reset = function(){
     settings.hwm = Infinity;
     settings.socks = {};
     settings.servers = {};
+    settings.pool_size = 20;
+    settings.keep_alive = false;
+    settings.sock_timeout = 1000;
     profile.set('timeout', 1000);
 };
 
@@ -50,8 +55,7 @@ var respond_msg = function(args, action){
         var actionstr = fn_names.join('.');
         var datastr = JSON.stringify(data);
         reply({
-            msg: 'illegal args.(action:'+ actionstr +', data:'+ datastr +')', 
-            status: false,
+            message: 'illegal args.(action:'+ actionstr +', data:'+ datastr +')', 
             stack: __filename
         });
         return;
@@ -67,8 +71,7 @@ var respond_msg = function(args, action){
         exec_fn(data, reply);
     }else{
         reply({
-            msg: 'no action found',
-            status: false,
+            message: 'no action found',
             stack: __filename
         });
     }
@@ -81,7 +84,10 @@ exports.create_server = function(port, action){
         server = axon.socket('rep');
         server.bind(port);
         settings.servers[port] = server;
-        server.on('socket error', function(){settings.servers[port] = undefined;});
+        server.on('socket error', function(){
+            server.close();
+            settings.servers[port] = undefined;
+        });
     }
 
     server.on('message', function(){
@@ -102,8 +108,16 @@ var req_server = function(addr, parsed_data, resolve){
         var index = settings.socks[addr].push(socket);
         socket.set('hwm', settings.hwm);
         socket.connect('tcp://'+ addr);
-        socket.on('connect', function(sock){sock.setKeepAlive(true);});
-        socket.on('socket error', function(e){settings.socks[addr].splice(index - 1, 1);});
+        socket.on('connect', function(sock){sock.setKeepAlive(settings.keep_alive);});
+        socket.on('socket error', function(e){
+            resolve({
+                message: e ? e.message : 'SOCK ERROR',
+                code: e ? e.code : 'ESOCKERR',
+                stack: __filename
+            });
+            socket.close();
+            settings.socks[addr].splice(index - 1, 1);
+        });
     }else{
         // like pool size
         var len = socket.length;
@@ -118,6 +132,12 @@ var req_server = function(addr, parsed_data, resolve){
         resolve(res);
     });
 
+    setTimeout(function(){
+        resolve({
+            message: 'SOCK TIMEOUT', 
+            stack: __filename
+        });
+    }, settings.sock_timeout);
     socket.send.apply(socket, parsed_data);
 };
 
@@ -152,6 +172,17 @@ exports.send_bunch = function(targets, data){
 
     _.each(targets, function(target){
         bunch_promises.push(send_one(target[0], target[1], data));
+    });
+
+    return Promise.all(bunch_promises);
+};
+
+// targets like ['127.0.0.1:3000', '127.0.0.1:3001']
+exports.send_bunch2 = function(targets, action,  data){
+    var bunch_promises = [];
+
+    _.each(targets, function(target){
+        bunch_promises.push(send_one(target, action, data));
     });
 
     return Promise.all(bunch_promises);

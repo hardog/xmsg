@@ -9,11 +9,14 @@ cluster app msg communication center!
 
 # Features
 
+- all function based on [Promise](#https://www.promisejs.org/)
 - create listen server
 - send to one/bunch server
 - performance log
 - log cache
 - connection pool size
+- keep alive with server
+- request service timeout
 - msg queue size set when loss connection
 
 
@@ -47,8 +50,19 @@ $ npm run cover
 
 # Usage
 
-## xmsg.set('profile', true), default is false
+## SETTINGS
 
+- xmsg.set('sock_timeout', 2000), default is 1000
+
+the timeout which `#send_one` request service
+
+- xmsg.set('keep_alive', true), default is false
+
+if keep alive with server
+
+- xmsg.set('profile', true), default is false
+
+show the following profile log
 ```
 Tag:api Host:v10-2-23-23.hx Target:10.2.21.186:8103@file.get Start:Thu Nov 24 2016 11:57:38 GMT+0800 (CST) Net1:147ms Fn:1ms Net2:6ms Attach:None
 
@@ -57,11 +71,15 @@ Fn: server deal through time
 Net2: the time from server to client
 ```
 
-## xmsg.set('pool_size', 100), default is 20
+- xmsg.set('timeout', 2000), default is 1000
+
+the time to flush profile log, be sure profile is on
+
+- xmsg.set('pool_size', 100), default is 20
 
 pool size for client connection to prevent lots of request use one connection
 
-## xmsg.set('hwm', 1000), default is Infinity
+- xmsg.set('hwm', 1000), default is Infinity
 
 when client loss connection with server, msg would be store in queue, hwm is the queue size
 
@@ -95,20 +113,23 @@ xmsg.send_one('127.0.0.1:3001', 'fn', 'hello'))
 
 ## xmsg.send_bunch
 
+the target server have different method name
 ```
 // send to multi machine of the cluster
 xmsg.send_bunch([
-    ['127.0.0.1:3000', 'fn'],
-    ['127.0.0.1:3001', 'fn'],
-    ['137.233.222.123:3001', 'fn']
+    ['127.0.0.1:3000', 'fn1'],
+    ['127.0.0.1:3001', 'fn2'],
+    ['137.233.222.123:3001', 'fn3']
 ], 'hello'))
 ```
 
-# TODO
+## xmsg.send_bunch2
 
-- send_bunch2, 当不同机器调用相同服务方法名相同时, 提供简便方法
-- socket keep alive, 当前配置可选设置, 默认不开启
-
+the target server share the same method name
+```
+// send to multi machine of the cluster
+xmsg.send_bunch2(['127.0.0.1:3000', '127.0.0.1:3001'], 'fn', hello'))
+```
 
 # License
 

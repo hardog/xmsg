@@ -71,8 +71,7 @@ describe('#index', function(){
             parsed_data.push(function(res){
                 socket.close();
                 socket = null;
-                expect(res.status).to.be.false;
-                expect(res.msg).to.be.equal('illegal args.(action:, data:{"a":1})');
+                expect(res.message).to.be.equal('illegal args.(action:, data:{"a":1})');
                 done();
             });
 
@@ -87,8 +86,7 @@ describe('#index', function(){
             parsed_data.push(function(res){
                 socket.close();
                 socket = null;
-                expect(res.status).to.be.false;
-                expect(res.msg).to.be.equal('no action found');
+                expect(res.message).to.be.equal('no action found');
                 done();
             });
 
@@ -245,7 +243,7 @@ describe('#index', function(){
                 expect(r).to.be.equal('hello');
                 done();
             })
-            .catch(function(e){console.error(e)});
+            .catch(function(e){console.log(e)});
         });
 
         it('should use exist connection = 2', function(done){
@@ -262,13 +260,56 @@ describe('#index', function(){
                 done();
             });
         });
+
+        it('should reply ECONNREFUSED', function(done){
+            xmsg.reset();
+            Promise.resolve()
+            .then(() => xmsg.send_one('127.0.0.1:3099', 'fn', 'hello whatever'))
+            .then((r) => {
+                expect(r.code).to.be.equal('ECONNREFUSED');
+                done();
+            })
+            .catch(function(e){console.log(e)});
+        });
+
+        it('hould drop msg when large than hwm', function(done){
+            xmsg.reset();
+            xmsg.set('hwm', 5);
+
+            xmsg.send_one('127.0.0.1:3100', 'fn', 'hello whatever1');
+            process.nextTick(function(){
+                var sock = xmsg._get('socks')['127.0.0.1:3100'][0];
+                expect(sock.settings.hwm).to.be.equal(5);
+                done();
+            });
+        });
+
+        it('hould drop msg when large than hwm', function(done){
+            xmsg.reset();
+            xmsg.set('sock_timeout', 10);
+            server = xmsg.create_server(3101, {
+                fn: function(data, res){
+                    setTimeout(function(){
+                        res('15');
+                    }, 15);
+                }
+            });
+
+            Promise.resolve()
+            .then(() => xmsg.send_one('127.0.0.1:3101', 'fn', '10'))
+            .then((r) => {
+                expect(r.message).to.be.equal('SOCK TIMEOUT');
+                done();
+            })
+            .catch(function(e){console.log(e)});
+        });
     });
 
     describe('#send_bunch', function(){
-        it('should reply /[ \'hello 3001\', \'hello\' ]/', function(done){
+        it('should reply /[ \'hello\', \'data\' ]/', function(done){
             var targets = [
                 ['127.0.0.1:3001', 'fn'],
-                ['127.0.0.1:3000', 'fn']
+                ['127.0.0.1:3000', 'args']
             ];
 
             Promise.resolve()
@@ -276,7 +317,21 @@ describe('#index', function(){
                 return xmsg.send_bunch(targets, 'data')
             })
             .then(function(r){
-                expect(r).to.deep.equal([ 'hello 3001', 'hello' ]);
+                expect(r).to.deep.equal([ 'hello 3001', 'data' ]);
+                done();
+            })
+            .catch(function(e){console.log(e)});
+        });
+
+        it('should reply /[ \'hello\', \'hello 3001\' ]/', function(done){
+            var targets = ['127.0.0.1:3000', '127.0.0.1:3001'];
+
+            Promise.resolve()
+            .then(function(){
+                return xmsg.send_bunch2(targets, 'fn', 'data')
+            })
+            .then(function(r){
+                expect(r).to.deep.equal([ 'hello', 'hello 3001' ]);
                 done();
             })
             .catch(function(e){console.log(e)});

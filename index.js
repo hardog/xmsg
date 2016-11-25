@@ -71,7 +71,7 @@ var respond_msg = function(args, action){
         exec_fn(data, reply);
     }else{
         reply({
-            message: 'no action found',
+            message: 'no action',
             stack: __filename
         });
     }
@@ -111,7 +111,7 @@ var req_server = function(addr, parsed_data, resolve){
         socket.on('connect', function(sock){sock.setKeepAlive(settings.keep_alive);});
         socket.on('socket error', function(e){
             resolve({
-                message: e ? e.message : 'SOCK ERROR',
+                message: e ? e.message : 'sock error',
                 code: e ? e.code : 'ESOCKERR',
                 stack: __filename
             });
@@ -134,7 +134,7 @@ var req_server = function(addr, parsed_data, resolve){
 
     setTimeout(function(){
         resolve({
-            message: 'SOCK TIMEOUT', 
+            message: 'sock timeout', 
             stack: __filename
         });
     }, settings.sock_timeout);

@@ -78,7 +78,7 @@ describe('#index', function(){
             socket.send.apply(socket, parsed_data);
         });
 
-        it('should reply /no action found/', function(done){
+        it('should reply /no action/', function(done){
             var socket = axon.socket('req');
             socket.connect(3000);
 
@@ -86,7 +86,7 @@ describe('#index', function(){
             parsed_data.push(function(res){
                 socket.close();
                 socket = null;
-                expect(res.message).to.be.equal('no action found');
+                expect(res.message).to.be.equal('no action');
                 done();
             });
 
@@ -298,7 +298,7 @@ describe('#index', function(){
             Promise.resolve()
             .then(function(){return xmsg.send_one('127.0.0.1:3101', 'fn', '10')})
             .then(function(r){
-                expect(r.message).to.be.equal('SOCK TIMEOUT');
+                expect(r.message).to.be.equal('sock timeout');
                 done();
             })
             .catch(function(e){console.log(e)});

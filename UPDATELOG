@@ -1,4 +1,4 @@
-# v1.0.22
+# UPDATELOG v1.0.22
 
 - change `xmsg.set('timeout', 1)` to `xmsg.set('q_timeout', 1)`
 - add `xmsg.send_bunch2` method

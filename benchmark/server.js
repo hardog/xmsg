@@ -2,7 +2,7 @@ var xmsg = require('../');
 var size = process.argv[2];
 
 var n = 0;
-var ops = 2000000;
+var ops = 200000;
 var prev = undefined;
 var r;
 

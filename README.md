@@ -70,9 +70,9 @@ Fn: server deal through time
 Net2: the time from server to client
 ```
 
-- **xmsg.set('timeout', 2000), default is 1000**
+- **xmsg.set('q_timeout', 2000), default is 1000**
 
-the time to flush profile log, be sure profile is on
+the time to flush profile log queue, be sure profile is on
 
 - **xmsg.set('pool_size', 100), default is 20**
 

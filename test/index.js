@@ -169,8 +169,8 @@ describe('#index', function(){
                 return xmsg.send_one('', 'fn', {a: 1})
             })
             .catch(function(e){
-                expect(e.status).to.be.false;
-                expect(e.msg).to.be.equal('parse target error.(addr:, action:fn)');
+                expect(e.code).to.be.equal('xmsg');
+                expect(e.message).to.be.equal('parse target error.(addr:, action:fn)');
                 done();
             });
         });
@@ -261,18 +261,27 @@ describe('#index', function(){
             });
         });
 
-        it('should reply ECONNREFUSED', function(done){
+        it('should round-robin use the socket', function(done){
             xmsg.reset();
-            Promise.resolve()
-            .then(function(){return xmsg.send_one('127.0.0.1:3099', 'fn', 'hello whatever')})
-            .then(function(r){
-                expect(r.code).to.be.equal('ECONNREFUSED');
+            xmsg.set('pool_size', 1);
+            xmsg.create_server(3098, {
+                fn: function(data, res){res('hello 3098')}
+            });
+
+            setTimeout(function(){
+                xmsg.send_one('127.0.0.1:3098', 'fn', 'whatever')
+                var socks = xmsg._get('socks');
+                expect(socks['127.0.0.1:3098'].cnt).to.be.equal(0);
+                xmsg.send_one('127.0.0.1:3098', 'fn', 'whatever');
+                expect(socks['127.0.0.1:3098'].cnt).to.be.equal(1);
+                xmsg.send_one('127.0.0.1:3098', 'fn', 'whatever');
+                expect(socks['127.0.0.1:3098'].cnt).to.be.equal(2);
+                expect(socks['127.0.0.1:3098'].length).to.be.equal(1);
                 done();
-            })
-            .catch(function(e){console.log(e)});
+            }, 10);
         });
 
-        it('hould drop msg when large than hwm', function(done){
+        it('should drop msg when large than hwm', function(done){
             xmsg.reset();
             xmsg.set('hwm', 5);
 
@@ -284,7 +293,7 @@ describe('#index', function(){
             });
         });
 
-        it('hould drop msg when large than hwm', function(done){
+        it('should timeout when large than setted timeout', function(done){
             xmsg.reset();
             xmsg.set('sock_timeout', 10);
             server = xmsg.create_server(3101, {
@@ -307,6 +316,7 @@ describe('#index', function(){
 
     describe('#send_bunch', function(){
         it('should reply /[ \'hello\', \'data\' ]/', function(done){
+            xmsg.reset();
             var targets = [
                 ['127.0.0.1:3001', 'fn'],
                 ['127.0.0.1:3000', 'args']
@@ -324,6 +334,7 @@ describe('#index', function(){
         });
 
         it('should reply /[ \'hello\', \'hello 3001\' ]/', function(done){
+            xmsg.reset();
             var targets = ['127.0.0.1:3000', '127.0.0.1:3001'];
 
             Promise.resolve()

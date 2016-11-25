@@ -20,8 +20,8 @@ exports._get = function(k){
 };
 
 exports.set = function(k, v){
-    if(k === 'timeout'){
-        return profile.set(k, v);
+    if(k === 'q_timeout'){
+        return profile.set('timeout', v);
     }
 
     settings[k] = v;
@@ -55,7 +55,8 @@ var respond_msg = function(args, action){
         var actionstr = fn_names.join('.');
         var datastr = JSON.stringify(data);
         reply({
-            message: 'illegal args.(action:'+ actionstr +', data:'+ datastr +')', 
+            message: 'illegal args.(action:'+ actionstr +', data:'+ datastr +')',
+            code: 'xmsg',
             stack: __filename
         });
         return;
@@ -72,6 +73,7 @@ var respond_msg = function(args, action){
     }else{
         reply({
             message: 'no action',
+            code: 'xmsg',
             stack: __filename
         });
     }
@@ -106,38 +108,37 @@ var req_server = function(addr, parsed_data, resolve){
         socket = axon.socket('req');
 
         var index = settings.socks[addr].push(socket);
+        settings.socks[addr].cnt = 0;
         socket.set('hwm', settings.hwm);
         socket.connect('tcp://'+ addr);
         socket.on('connect', function(sock){sock.setKeepAlive(settings.keep_alive);});
         socket.on('socket error', function(e){
-            resolve({
-                message: e ? e.message : 'sock error',
-                code: e ? e.code : 'ESOCKERR',
-                stack: __filename
-            });
             socket.close();
             settings.socks[addr].splice(index - 1, 1);
         });
     }else{
         // like pool size
         var len = socket.length;
-        socket = socket[_.random(0, len - 1)];
+        socket = socket[socket.cnt++ % len];
     }
 
+    var timeout_handle = setTimeout(function(){
+        clearTimeout(timeout_handle);
+        resolve({
+            message: 'sock timeout',
+            code: 'xmsg',
+            stack: __filename
+        });
+    }, settings.sock_timeout);
+
     parsed_data.push(function(res){
+        clearTimeout(timeout_handle);
         if(settings.profile){
             profile.show(res[0]);
             return resolve(res[1]);
         }
         resolve(res);
     });
-
-    setTimeout(function(){
-        resolve({
-            message: 'sock timeout', 
-            stack: __filename
-        });
-    }, settings.sock_timeout);
     socket.send.apply(socket, parsed_data);
 };
 
@@ -145,8 +146,8 @@ var req_server = function(addr, parsed_data, resolve){
 var send_one = function(addr, action, data){
     if(!addr || !action){
         return Promise.reject({
-            msg: 'parse target error.(addr:'+ addr +', action:'+ action +')',
-            status: false,
+            message: 'parse target error.(addr:'+ addr +', action:'+ action +')',
+            code: 'xmsg',
             stack: __filename
         });
     }

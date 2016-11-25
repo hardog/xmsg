@@ -47,20 +47,17 @@ run test coverage:
 $ npm run cover
 ```
 
+# SETTINGS
 
-# Usage
-
-## SETTINGS
-
-- xmsg.set('sock_timeout', 2000), default is 1000
+- **xmsg.set('sock_timeout', 2000), default is 1000**
 
 the timeout which `#send_one` request service
 
-- xmsg.set('keep_alive', true), default is false
+- **xmsg.set('keep_alive', true), default is false**
 
 if keep alive with server
 
-- xmsg.set('profile', true), default is false
+- **xmsg.set('profile', true), default is false**
 
 show the following profile log
 ```
@@ -71,7 +68,7 @@ Fn: server deal through time
 Net2: the time from server to client
 ```
 
-- xmsg.set('timeout', 2000), default is 1000
+- **xmsg.set('timeout', 2000), default is 1000**
 
 the time to flush profile log, be sure profile is on
 
@@ -79,9 +76,12 @@ the time to flush profile log, be sure profile is on
 
 pool size for client connection to prevent lots of request use one connection
 
-- xmsg.set('hwm', 1000), default is Infinity
+- **xmsg.set('hwm', 1000), default is Infinity**
 
 when client loss connection with server, msg would be store in queue, hwm is the queue size
+
+
+# Usage
 
 ## xmsg.reset()
 
@@ -93,10 +93,10 @@ this would be clear previous set(profile, pool_size, hwm).
 // local machine create a server listen port 3000
 // by `reply` return msg to client
 xmsg.create_server(3000, {
-    fn: (data, reply) => reply('hello'),
-    args: (data, reply) => reply(data),
+    fn: function(data, reply){reply('hello')},
+    args: function(data, reply){reply(data)},
     multi: {
-        fn: (data, reply) => reply(data)
+        fn: function(data, reply){reply(data)}
     }
 });
 ```

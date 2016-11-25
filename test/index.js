@@ -264,8 +264,8 @@ describe('#index', function(){
         it('should reply ECONNREFUSED', function(done){
             xmsg.reset();
             Promise.resolve()
-            .then(() => xmsg.send_one('127.0.0.1:3099', 'fn', 'hello whatever'))
-            .then((r) => {
+            .then(function(){return xmsg.send_one('127.0.0.1:3099', 'fn', 'hello whatever')})
+            .then(function(r){
                 expect(r.code).to.be.equal('ECONNREFUSED');
                 done();
             })
@@ -296,8 +296,8 @@ describe('#index', function(){
             });
 
             Promise.resolve()
-            .then(() => xmsg.send_one('127.0.0.1:3101', 'fn', '10'))
-            .then((r) => {
+            .then(function(){return xmsg.send_one('127.0.0.1:3101', 'fn', '10')})
+            .then(function(r){
                 expect(r.message).to.be.equal('SOCK TIMEOUT');
                 done();
             })

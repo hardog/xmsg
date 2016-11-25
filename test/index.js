@@ -115,7 +115,7 @@ describe('#index', function(){
 
             xmsg.set('profile', true);
             // default 1000 when no timeout set
-            xmsg.set('timeout', 10);
+            xmsg.set('q_timeout', 10);
             xmsg.create_server(3002, {
                 fn: function(data, res){res('hello 3002')}
             });

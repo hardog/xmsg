@@ -72,7 +72,7 @@ Net2: the time from server to client
 
 the time to flush profile log, be sure profile is on
 
-- xmsg.set('pool_size', 100), default is 20
+- **xmsg.set('pool_size', 100), default is 20**
 
 pool size for client connection to prevent lots of request use one connection
 
@@ -85,7 +85,7 @@ when client loss connection with server, msg would be store in queue, hwm is the
 
 ## xmsg.reset()
 
-this would be clear previous set(profile, pool_size, hwm).
+clear previous settings.
 
 ## xmsg.create_server
 

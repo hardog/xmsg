@@ -28,9 +28,11 @@ cluster app msg communication center!
 # Benchmark
 
 ```
-// 4C4G  
-max: 36432 ops/s
-min: 27531 ops/s
+// 1C1G  in virutal box 
+// uname -a: Linux localhost.localdomain 3.10.0-229.el7.x86_64 #1 SMP Fri Mar 6 11:36:42 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
+
+max: 17750 ops/s
+min: 12900 ops/s
 
 ```
 

@@ -104,6 +104,11 @@ xmsg.send_bunch([
 ], 'hello'))
 ```
 
+# TODO
+
+- send_bunch2, 当不同机器调用相同服务方法名相同时, 提供简便方法
+- socket keep alive, 当前配置可选设置, 默认不开启
+
 
 # License
 

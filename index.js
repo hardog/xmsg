@@ -106,7 +106,6 @@ var req_server = function(addr, parsed_data, resolve){
         socket = axon.socket('req');
 
         var index = settings.socks[addr].push(socket);
-        settings.socks[addr].cnt = 0;
         socket.set('hwm', settings.hwm);
         socket.connect('tcp://'+ addr);
         socket.on('connect', function(sock){sock.setKeepAlive(settings.keep_alive);});
@@ -117,7 +116,7 @@ var req_server = function(addr, parsed_data, resolve){
     }else{
         // like pool size
         var len = socket.length;
-        socket = socket[socket.cnt++ % len];
+        socket = socket[_.random(0, len - 1)];
     }
 
     parsed_data.push(function(res){

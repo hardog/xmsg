@@ -262,26 +262,6 @@ describe('#index', function(){
             });
         });
 
-        it('should round-robin use the socket', function(done){
-            xmsg.reset();
-            xmsg.set('pool_size', 1);
-            xmsg.create_server(3098, {
-                fn: function(data, res){res('hello 3098')}
-            });
-
-            setTimeout(function(){
-                xmsg.send_one('127.0.0.1:3098', 'fn', 'whatever')
-                var socks = xmsg._get('socks');
-                expect(socks['127.0.0.1:3098'].cnt).to.be.equal(0);
-                xmsg.send_one('127.0.0.1:3098', 'fn', 'whatever');
-                expect(socks['127.0.0.1:3098'].cnt).to.be.equal(1);
-                xmsg.send_one('127.0.0.1:3098', 'fn', 'whatever');
-                expect(socks['127.0.0.1:3098'].cnt).to.be.equal(2);
-                expect(socks['127.0.0.1:3098'].length).to.be.equal(1);
-                done();
-            }, 10);
-        });
-
         it('should drop msg when large than hwm', function(done){
             xmsg.reset();
             xmsg.set('hwm', 5);

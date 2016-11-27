@@ -16,7 +16,6 @@ cluster app msg communication center!
 - log cache
 - connection pool size
 - keep alive with server
-- request service timeout
 - msg queue size set when loss connection
 
 
@@ -50,10 +49,6 @@ $ npm run cover
 ```
 
 # SETTINGS
-
-- **xmsg.set('sock_timeout', 2000), default is 1000**
-
-the timeout which `#send_one` request service
 
 - **xmsg.set('keep_alive', true), default is false**
 

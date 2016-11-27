@@ -1,6 +1,7 @@
 var axon  = require('axon');
 var Promise = require('promise');
 var expect = require('chai').expect;
+var profile = require('../profile');
 var xmsg = require('../index');
 
 describe('#index', function(){
@@ -293,24 +294,10 @@ describe('#index', function(){
             });
         });
 
-        it('should timeout when large than setted timeout', function(done){
+        it('should return undefined', function(){
             xmsg.reset();
-            xmsg.set('sock_timeout', 10);
-            server = xmsg.create_server(3101, {
-                fn: function(data, res){
-                    setTimeout(function(){
-                        res('15');
-                    }, 15);
-                }
-            });
 
-            Promise.resolve()
-            .then(function(){return xmsg.send_one('127.0.0.1:3101', 'fn', '10')})
-            .then(function(r){
-                expect(r.message).to.be.equal('sock timeout');
-                done();
-            })
-            .catch(function(e){console.log(e)});
+            expect(profile.show()).to.be.undefined;
         });
     });
 

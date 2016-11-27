@@ -8,7 +8,6 @@ var settings = {
     profile: false,
     hwm: Infinity,
     keep_alive: false,
-    sock_timeout: 1000,
     pool_size: 20,
     socks: [],
     servers: {}
@@ -34,7 +33,6 @@ exports.reset = function(){
     settings.servers = {};
     settings.pool_size = 20;
     settings.keep_alive = false;
-    settings.sock_timeout = 1000;
     profile.set('timeout', 1000);
 };
 
@@ -122,17 +120,7 @@ var req_server = function(addr, parsed_data, resolve){
         socket = socket[socket.cnt++ % len];
     }
 
-    var timeout_handle = setTimeout(function(){
-        clearTimeout(timeout_handle);
-        resolve({
-            message: 'sock timeout',
-            code: 'xmsg',
-            stack: __filename
-        });
-    }, settings.sock_timeout);
-
     parsed_data.push(function(res){
-        clearTimeout(timeout_handle);
         if(settings.profile){
             profile.show(res[0]);
             return resolve(res[1]);

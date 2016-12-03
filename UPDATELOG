@@ -4,3 +4,7 @@
 - add `xmsg.send_bunch2` method
 - add `xmsg.set('sock_timeout', 1)` setting
 - add `xmsg.set('keep_alive', true)` setting
+
+# UPDATELOG v1.1.1
+
+- add profile empty value check

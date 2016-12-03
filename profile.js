@@ -25,10 +25,12 @@ var start = function(tag, args){
 };
 
 var land = function(args){
+    args = args || {};
     var ts = Date.now();
+    var dura = ts - args._time;
     var profile = {
         _target: args._target || 'NONE',
-        _net1: ts - args._time || 0,
+        _net1: (dura < 0 ? 0 : dura),
         _fn: ts,
         _start: args._start,
         _attach: args._attach || ''
@@ -49,7 +51,8 @@ var land = function(args){
 var wrap_reply = function(p, reply){
     return function(data){
         var ts = Date.now();
-        p._fn = ts - p._fn || 0;
+        var dura = ts - p._fn;
+        p._fn = (dura < 0 ? 0 : dura);
         p._net2 = ts;
 
         reply([p, data]);

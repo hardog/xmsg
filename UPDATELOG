@@ -8,3 +8,4 @@
 # UPDATELOG v1.1.1
 
 - add profile empty value check
+- rm `sock_time` config

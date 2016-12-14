@@ -64,6 +64,9 @@ Net1: the time from client to server
 Fn: server deal through time
 Net2: the time from server to client
 ```
+- **xmsg.set('sock_timeout', 2000), default is 100**
+
+the time threshold when send request to server 
 
 - **xmsg.set('q_timeout', 2000), default is 1000**
 
@@ -127,11 +130,6 @@ the target server share the same method name
 // send to multi machine of the cluster
 xmsg.send_bunch2(['127.0.0.1:3000', '127.0.0.1:3001'], 'fn', hello'))
 ```
-
-# TODO
-
-- 出错情况添加`status: false`标记, 参考其他库的出错提示
-
 
 # License
 

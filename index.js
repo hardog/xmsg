@@ -130,15 +130,19 @@ var req_server = function(addr, parsed_data, resolve){
         }
         resolve(res);
     });
+
+    console.timeEnd(2);
     socket.send.apply(socket, parsed_data);
 };
 
 // addr like 127.0.0.1:3000, action like: create
 var send_one = function(addr, action, data){
+    console.time(1);
     if(!addr || !action){
         return Promise.reject({
             message: 'parse target error.(addr:'+ addr +', action:'+ action +')',
             code: 'xmsg',
+            status: false,
             stack: __filename
         });
     }
@@ -151,7 +155,8 @@ var send_one = function(addr, action, data){
     var parsed_data = [action, pair_data[0]];
 
     parsed_data = parsed_data.concat(pair_data[1]);
-
+    console.timeEnd(1);
+    console.time(2);
     return new Promise(function(resolve){
         req_server(addr, parsed_data, resolve);
     });

@@ -8,4 +8,9 @@
 # UPDATELOG v1.1.1
 
 - add profile empty value check
-- rm `sock_time` config
+- rm `sock_timeout` config
+
+# UPDATELOG v1.1.2
+
+- ad `sock_timeout` config back
+- fix BUG when dealing with Buffer

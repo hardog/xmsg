@@ -9,7 +9,7 @@ var settings = {
     hwm: Infinity,
     keep_alive: false,
     pool_size: 20,
-    req_timeout: 100,
+    sock_timeout: 100,
     socks: [],
     servers: {}
 };
@@ -34,7 +34,7 @@ exports.reset = function(){
     settings.servers = {};
     settings.pool_size = 20;
     settings.keep_alive = false;
-    settings.req_timeout = 100;
+    settings.sock_timeout = 100;
     profile.set('timeout', 1000);
 };
 
@@ -123,7 +123,18 @@ var req_server = function(addr, parsed_data, resolve){
         socket = socket[_.random(0, len - 1)];
     }
 
+    var time_handle = setTimeout(function(){
+        resolve({
+            message: 'request socket timeout',
+            code: 'xmsg',
+            status: false,
+            stack: __filename
+        });
+        clearTimeout(time_handle);
+    }, settings.sock_timeout);
+
     parsed_data.push(function(res){
+        clearTimeout(time_handle);
         if(settings.profile){
             profile.show(res[0]);
             return resolve(res[1]);
@@ -131,13 +142,11 @@ var req_server = function(addr, parsed_data, resolve){
         resolve(res);
     });
 
-    console.timeEnd(2);
     socket.send.apply(socket, parsed_data);
 };
 
 // addr like 127.0.0.1:3000, action like: create
 var send_one = function(addr, action, data){
-    console.time(1);
     if(!addr || !action){
         return Promise.reject({
             message: 'parse target error.(addr:'+ addr +', action:'+ action +')',
@@ -155,8 +164,6 @@ var send_one = function(addr, action, data){
     var parsed_data = [action, pair_data[0]];
 
     parsed_data = parsed_data.concat(pair_data[1]);
-    console.timeEnd(1);
-    console.time(2);
     return new Promise(function(resolve){
         req_server(addr, parsed_data, resolve);
     });

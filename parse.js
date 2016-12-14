@@ -3,20 +3,23 @@ var _ = require('lodash');
 //----------- before send data -------------//
 var dereal_args = function(data){
     switch(data){
-        case null: return '$null$';
-        case undefined: return '$undefined$';
+        case null: return '[%null%]';
+        case undefined: return '[%undefined%]';
         default: return data;
     }
 };
 exports.dereal_args = dereal_args;
 
 exports.kv_pair = function(data){
+    if(Buffer.isBuffer(data)){
+        return [false, data.toString()];
+    }
+
     if(!_.isObject(data)){ 
         return [false, dereal_args(data)]; 
     }
 
     var keys = [], values = [];
-
     for(var k in data) {
         keys.push(k);
         values.push(dereal_args(data[k]));
@@ -28,8 +31,8 @@ exports.kv_pair = function(data){
 //--------- after received data ----------//
 var real_args = function(data){
     switch(data){
-        case '$null$': return null;
-        case '$undefined$': return undefined;
+        case '[%null%]': return null;
+        case '[%undefined%]': return undefined;
         default: return data;
     }
 };

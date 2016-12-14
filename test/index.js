@@ -247,6 +247,38 @@ describe('#index', function(){
             .catch(function(e){console.log(e)});
         });
 
+        it('should work when use #Buffer', function(done){
+            xmsg.reset();
+
+            Promise.resolve()
+            .then(function(){return xmsg.send_one('127.0.0.1:3000', 'args', new Buffer('buffer'))})
+            .then(function(r){
+                expect(r).to.be.equal('buffer');
+                done();
+            })
+            .catch(function(e){console.log(e)});
+        });
+
+        it('should work when set [sock_timeout]', function(done){
+            xmsg.reset();
+            xmsg.set('sock_timeout', 1);
+
+            xmsg.create_server(3006, {
+                args: function(data, res){
+                    setTimeout(() => res(data), 10);
+                }
+            });
+
+            Promise.resolve()
+            .then(function(){return xmsg.send_one('127.0.0.1:3006', 'args', new Buffer('buffer'))})
+            .then(function(r){
+                expect(r.status).to.be.false;
+                expect(r.message).to.be.equal('request socket timeout');
+                done();
+            })
+            .catch(function(e){console.log(e)});
+        });
+
         it('should use exist connection = 2', function(done){
             xmsg.reset();
             xmsg.set('pool_size', 2);

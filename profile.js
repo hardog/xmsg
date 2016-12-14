@@ -79,7 +79,8 @@ var write = function(str){
 
 var show = function(p){
     if(!p){return;}
-    p._net2 = Date.now() - p._net2 || 0;
+    var dura = Date.now() - p._net2;
+    p._net2 = (dura < 0 ? 0 : dura);
     write('Tag:' + (process.title || 'None') +
                 ' Host:' + os.hostname() +
                 ' Target:' + p._target + 

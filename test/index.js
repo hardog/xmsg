@@ -87,7 +87,7 @@ describe('#index', function(){
             parsed_data.push(function(res){
                 socket.close();
                 socket = null;
-                expect(res.message).to.be.equal('no action');
+                expect(res.message).to.be.equal('not fount action');
                 done();
             });
 

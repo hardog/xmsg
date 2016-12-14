@@ -9,6 +9,7 @@ var settings = {
     hwm: Infinity,
     keep_alive: false,
     pool_size: 20,
+    req_timeout: 100,
     socks: [],
     servers: {}
 };
@@ -33,6 +34,7 @@ exports.reset = function(){
     settings.servers = {};
     settings.pool_size = 20;
     settings.keep_alive = false;
+    settings.req_timeout = 100;
     profile.set('timeout', 1000);
 };
 
@@ -55,6 +57,7 @@ var respond_msg = function(args, action){
         reply({
             message: 'illegal args.(action:'+ actionstr +', data:'+ datastr +')',
             code: 'xmsg',
+            status: false,
             stack: __filename
         });
         return;
@@ -70,8 +73,9 @@ var respond_msg = function(args, action){
         exec_fn(data, reply);
     }else{
         reply({
-            message: 'no action',
+            message: 'not fount action',
             code: 'xmsg',
+            status: false,
             stack: __filename
         });
     }

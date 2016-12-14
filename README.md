@@ -128,6 +128,11 @@ the target server share the same method name
 xmsg.send_bunch2(['127.0.0.1:3000', '127.0.0.1:3001'], 'fn', hello'))
 ```
 
+# TODO
+
+- 出错情况添加`status: false`标记, 参考其他库的出错提示
+
+
 # License
 
 [MIT](https://github.com/hardog/xmsg/blob/master/LICENSE)

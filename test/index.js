@@ -265,7 +265,7 @@ describe('#index', function(){
 
             xmsg.create_server(3006, {
                 args: function(data, res){
-                    setTimeout(() => res(data), 10);
+                    setTimeout(function(){return res(data)}, 10);
                 }
             });
 
